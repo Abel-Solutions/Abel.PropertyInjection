@@ -27,11 +27,11 @@ namespace Abel.PropertyInjection.Tests
         [Fact]
         public void Inject_PrivateField_IsInjected() => TestInjection<HelloWorldPrivateField>();
 
-        private static void TestInjection<T>()
-            where T : class, IHelloWorld
+        private static void TestInjection<THelloWorld>()
+            where THelloWorld : class, IHelloWorld
         {
             var services = new ServiceCollection()
-                .AddTransient<IHelloWorld, T>()
+                .AddTransient<IHelloWorld, THelloWorld>()
                 .AddTransient<IConsole, CustomConsole>();
 
             var serviceProvider = services.BuildServiceProvider()
