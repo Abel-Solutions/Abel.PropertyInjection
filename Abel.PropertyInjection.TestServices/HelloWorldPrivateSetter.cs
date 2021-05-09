@@ -3,7 +3,7 @@ using Abel.PropertyInjection.TestServices.Interfaces;
 
 namespace Abel.PropertyInjection.TestServices
 {
-    public class HelloWorldPrivateSet : IHelloWorld
+    public class HelloWorldPrivateSetter : IHelloWorld
     {
         [Inject]
         public IConsole Console { get; private set; }

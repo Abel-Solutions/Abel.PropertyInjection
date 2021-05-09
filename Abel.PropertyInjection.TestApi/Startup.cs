@@ -22,7 +22,7 @@ namespace Abel.PropertyInjection.TestApi
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
-            services.AddTransient<IHelloWorld, HelloWorldPublicSet>();
+            services.AddTransient<IHelloWorld, HelloWorldPublicSetter>();
             services.AddTransient<IConsole, CustomConsole>();
             services.AddPropertyInjection();
         }

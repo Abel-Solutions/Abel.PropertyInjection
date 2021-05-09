@@ -13,10 +13,10 @@ namespace Abel.PropertyInjection.Tests
     public class PropertyInjectionTests
     {
         [Fact]
-        public void Inject_PublicSet_IsInjected()
+        public void Inject_PublicSetter_IsInjected()
         {
             var services = new ServiceCollection()
-                .AddTransient<IHelloWorld, HelloWorldPublicSet>()
+                .AddTransient<IHelloWorld, HelloWorldPublicSetter>()
                 .AddTransient<IConsole, CustomConsole>();
 
             var serviceProvider = services.BuildServiceProvider()
@@ -33,10 +33,30 @@ namespace Abel.PropertyInjection.Tests
         }
 
         [Fact]
-        public void Inject_PrivateSet_IsInjected()
+        public void Inject_PrivateSetter_IsInjected()
         {
             var services = new ServiceCollection()
-                .AddTransient<IHelloWorld, HelloWorldPrivateSet>()
+                .AddTransient<IHelloWorld, HelloWorldPrivateSetter>()
+                .AddTransient<IConsole, CustomConsole>();
+
+            var serviceProvider = services.BuildServiceProvider()
+                .WithPropertyInjections();
+
+            var sb = new StringBuilder();
+
+            Console.SetOut(new StringWriter(sb));
+
+            var helloWorld = serviceProvider.GetService<IHelloWorld>();
+            helloWorld.Hello();
+
+            sb.ToString().Should().Be("Hello World" + Environment.NewLine);
+        }
+
+        [Fact]
+        public void Inject_NoSetter_IsInjected()
+        {
+            var services = new ServiceCollection()
+                .AddTransient<IHelloWorld, HelloWorldNoSetter>()
                 .AddTransient<IConsole, CustomConsole>();
 
             var serviceProvider = services.BuildServiceProvider()

@@ -20,7 +20,7 @@ namespace Abel.PropertyInjection.TestApp
 
         private static IServiceCollection ConfigureServices() =>
             new ServiceCollection()
-                .AddTransient<IHelloWorld, HelloWorldPublicSet>()
+                .AddTransient<IHelloWorld, HelloWorldPublicSetter>()
                 .AddTransient<IConsole, CustomConsole>();
                 //.AddPropertyInjection();
     }

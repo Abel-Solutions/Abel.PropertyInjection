@@ -3,10 +3,10 @@ using Abel.PropertyInjection.TestServices.Interfaces;
 
 namespace Abel.PropertyInjection.TestServices
 {
-    public class HelloWorldPublicSet : IHelloWorld
+    public class HelloWorldNoSetter : IHelloWorld
     {
         [Inject]
-        public IConsole Console { get; set; }
+        public IConsole Console { get; }
 
         public void Hello() => Console.WriteLine("Hello World");
     }
