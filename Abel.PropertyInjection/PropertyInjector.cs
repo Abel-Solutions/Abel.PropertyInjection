@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using Abel.PropertyInjection.Attributes;
-using Abel.PropertyInjection.Exceptions;
 using Abel.PropertyInjection.Interfaces;
 
 namespace Abel.PropertyInjection
@@ -17,64 +16,43 @@ namespace Abel.PropertyInjection
         public PropertyInjector(IServiceProvider serviceProvider) =>
             _serviceProvider = serviceProvider;
 
-        public void InjectProperties(object instance)
+        public void InjectProperties(object instance) =>
+            GetInjectableMembers(instance)
+                .ToList().ForEach(member => InjectMember(instance, member));
+
+        private static IEnumerable<MemberInfo> GetInjectableMembers(object instance) =>
+            instance
+                .GetType()
+                .GetMembers(Flags)
+                .Where(IsInjectable);
+
+        private static bool IsInjectable(MemberInfo member) =>
+            member.GetCustomAttribute<InjectAttribute>() != null;
+
+        private void InjectMember(object instance, MemberInfo member)
         {
-            GetInjectableProperties(instance)
-                .ToList().ForEach(prop => InjectProperty(instance, prop));
+            if (member.MemberType == MemberTypes.Property)
+            {
+                InjectProperty(instance, (PropertyInfo)member);
+                return;
+            }
 
-            GetInjectableFields(instance)
-                .ToList().ForEach(field => InjectField(instance, field));
+            InjectField(instance, (FieldInfo)member);
         }
-
-        private static IEnumerable<PropertyInfo> GetInjectableProperties(object instance) =>
-            instance
-                .GetType()
-                .GetProperties(Flags)
-                .Where(IsInjectable);
-
-        private static IEnumerable<FieldInfo> GetInjectableFields(object instance) =>
-            instance
-                .GetType()
-                .GetFields(Flags)
-                .Where(IsInjectable);
-
-        private static bool IsInjectable(PropertyInfo prop) =>
-            prop.GetCustomAttribute<InjectAttribute>() != null;
-
-        private static bool IsInjectable(FieldInfo field) =>
-            field.GetCustomAttribute<InjectAttribute>() != null;
 
         private void InjectProperty(object instance, PropertyInfo prop)
         {
-            var service = GetService(prop.PropertyType);
-
             if (prop.CanWrite)
             {
-                SetValue(prop, instance, service);
+                prop.SetValue(instance, GetService(prop.PropertyType));
                 return;
             }
 
-            if (GetBackingField(prop) is var backingField and not null)
-            {
-                SetValue(backingField, instance, service);
-                return;
-            }
-
-            throw new NotInjectableException($"Unable to inject {service.GetType().Name} into property {prop.Name}");
+            InjectField(instance, GetBackingField(prop));
         }
 
-        private void InjectField(object instance, FieldInfo field)
-        {
-            var service = GetService(field.FieldType);
-
-            SetValue(field, instance, service);
-        }
-
-        private static void SetValue(PropertyInfo prop, object instance, object value) =>
-            prop.SetValue(instance, value);
-
-        private static void SetValue(FieldInfo field, object instance, object service) =>
-            field.SetValue(instance, service);
+        private void InjectField(object instance, FieldInfo field) =>
+            field.SetValue(instance, GetService(field.FieldType));
 
         private static FieldInfo GetBackingField(PropertyInfo prop) =>
             prop.DeclaringType.GetField($"<{prop.Name}>k__BackingField", Flags);

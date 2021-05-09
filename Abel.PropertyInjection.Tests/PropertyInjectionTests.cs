@@ -91,5 +91,25 @@ namespace Abel.PropertyInjection.Tests
 
             sb.ToString().Should().Be("Hello World" + Environment.NewLine);
         }
+
+        [Fact]
+        public void Inject_PrivateField_IsInjected()
+        {
+            var services = new ServiceCollection()
+                .AddTransient<IHelloWorld, HelloWorldPrivateField>()
+                .AddTransient<IConsole, CustomConsole>();
+
+            var serviceProvider = services.BuildServiceProvider()
+                .WithPropertyInjections();
+
+            var sb = new StringBuilder();
+
+            Console.SetOut(new StringWriter(sb));
+
+            var helloWorld = serviceProvider.GetService<IHelloWorld>();
+            helloWorld.Hello();
+
+            sb.ToString().Should().Be("Hello World" + Environment.NewLine);
+        }
     }
 }
