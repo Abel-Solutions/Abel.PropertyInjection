@@ -1,3 +1,4 @@
+using System;
 using Abel.PropertyInjection.Infrastructure;
 using Abel.PropertyInjection.TestServices;
 using Abel.PropertyInjection.TestServices.Interfaces;
@@ -5,6 +6,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
 
 namespace Abel.PropertyInjection.TestApi
@@ -24,7 +26,6 @@ namespace Abel.PropertyInjection.TestApi
             services.AddControllers();
             services.AddTransient<IHelloWorld, HelloWorldPublicSetter>();
             services.AddTransient<IConsole, CustomConsole>();
-            services.AddPropertyInjection();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

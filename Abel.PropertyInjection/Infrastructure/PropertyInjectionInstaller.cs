@@ -1,42 +1,20 @@
-﻿using System;
-using HarmonyLib;
+﻿using Abel.PropertyInjection.Interfaces;
+using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 
 namespace Abel.PropertyInjection.Infrastructure
 {
     public static class PropertyInjectionInstaller
     {
-        private static IServiceProvider _serviceProvider;
+        public static IHostBuilder UsePropertyInjection(this IHostBuilder hostBuilder) =>
+            hostBuilder
+                .UseServiceProviderFactory(new PropertyInjectionServiceProviderFactory())
+                .ConfigureServices(ConfigureServices);
 
-        public static IServiceCollection AddPropertyInjection(this IServiceCollection services)
-        {
-            _serviceProvider = services.BuildServiceProvider();
-            PatchServiceProvider();
-            return services;
-        }
-
-        private static void PatchServiceProvider()
-        {
-            var harmony = new Harmony("yeeee");
-
-            //var serviceProviderType = _serviceProvider.GetService<IServiceProvider>().GetType();
-            var serviceProviderType = typeof(ServiceProvider);
-
-            var originalMethod = serviceProviderType.GetMethod(nameof(ServiceProvider.GetService));
-
-            //var originalMethod = typeof(Console).GetMethod(nameof(Console.WriteLine), new []{ typeof(string)});
-
-            var newMethod = typeof(PropertyInjectionInstaller).GetMethod(nameof(Postfix));
-
-            var postfix = new HarmonyMethod(newMethod);
-
-            harmony.Patch(originalMethod, postfix: postfix);
-        }
-
-        public static void Postfix(ref object __result) // todo private, flags
-        {
-            Console.WriteLine("in Postfix!");
-            //InjectProps(__result);
-        }
+        private static void ConfigureServices(IServiceCollection services) =>
+            services
+                .AddSingleton<IPropertyInjector, PropertyInjector>()
+                .AddSingleton<IControllerFactory, PropertyInjectionControllerFactory>();
     }
 }

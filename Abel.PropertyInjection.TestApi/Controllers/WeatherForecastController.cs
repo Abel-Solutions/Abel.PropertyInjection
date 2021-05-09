@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Abel.PropertyInjection.TestServices.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
 namespace Abel.PropertyInjection.TestApi.Controllers
@@ -22,8 +23,7 @@ namespace Abel.PropertyInjection.TestApi.Controllers
         public WeatherForecastController(ILogger<WeatherForecastController> logger, IHelloWorld helloWorld, IServiceProvider serviceProvider)
         {
             _logger = logger;
-            _helloWorld = helloWorld;
-            var lol = serviceProvider.GetService(typeof(IHelloWorld));
+            _helloWorld = serviceProvider.GetService<IHelloWorld>();
         }
 
         [HttpGet]

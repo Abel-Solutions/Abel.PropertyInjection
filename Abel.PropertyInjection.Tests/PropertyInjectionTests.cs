@@ -1,11 +1,12 @@
 ﻿using System;
 using System.IO;
 using System.Text;
-using Abel.PropertyInjection.Extensions;
+using Abel.PropertyInjection.Infrastructure;
 using Abel.PropertyInjection.TestServices;
 using Abel.PropertyInjection.TestServices.Interfaces;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Xunit;
 
 namespace Abel.PropertyInjection.Tests
@@ -27,24 +28,30 @@ namespace Abel.PropertyInjection.Tests
         [Fact]
         public void Inject_PrivateField_IsInjected() => TestInjection<HelloWorldPrivateField>();
 
-        private static void TestInjection<THelloWorld>()
-            where THelloWorld : class, IHelloWorld
+        private static void TestInjection<TService>()
+            where TService : class, IHostedService
         {
-            var services = new ServiceCollection()
-                .AddTransient<IHelloWorld, THelloWorld>()
-                .AddTransient<IConsole, CustomConsole>();
-
-            var serviceProvider = services.BuildServiceProvider()
-                .WithPropertyInjections();
-
             var sb = new StringBuilder();
-
             Console.SetOut(new StringWriter(sb));
 
-            var helloWorld = serviceProvider.GetService<IHelloWorld>();
-            helloWorld.Hello();
+            new HostBuilder()
+                .ConfigureServices(ConfigureServices<TService>)
+                .UsePropertyInjection()
+                .Build().Run();
+
+            //var serviceProvider = services.BuildServiceProvider()
+            //    .WithPropertyInjections(); // todo
+
+            //var helloWorld = serviceProvider.GetService<IHelloWorld>();
+            //helloWorld.Hello();
 
             sb.ToString().Should().Be("Hello World" + Environment.NewLine);
         }
+
+        private static void ConfigureServices<TService>(IServiceCollection services)
+            where TService : class, IHostedService =>
+            services
+                .AddHostedService<TService>()
+                .AddTransient<IConsole, CustomConsole>();
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System;
 using Abel.PropertyInjection.Interfaces;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Abel.PropertyInjection
 {
@@ -8,16 +9,16 @@ namespace Abel.PropertyInjection
         private readonly IServiceProvider _serviceProvider;
         private readonly IPropertyInjector _propertyInjector;
 
-        public PropertyInjectionServiceProvider(IServiceProvider serviceProvider)
+        public PropertyInjectionServiceProvider(IServiceCollection services)
         {
-            _serviceProvider = serviceProvider;
-            _propertyInjector = new PropertyInjector(serviceProvider);
+            _serviceProvider = services.BuildServiceProvider();
+            _propertyInjector = new PropertyInjector(_serviceProvider);
         }
 
         public object GetService(Type serviceType)
         {
             var service = _serviceProvider.GetService(serviceType);
-            _propertyInjector.InjectProperties(service);
+            _propertyInjector.InjectProperties(service, _serviceProvider);
             return service;
         }
     }
