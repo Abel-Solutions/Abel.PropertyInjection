@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using Abel.PropertyInjection.Attributes;
@@ -16,14 +17,22 @@ namespace Abel.PropertyInjection
             _serviceProvider = serviceProvider;
 
         public void InjectProperties(object instance) =>
+            GetInjectableProperties(instance)
+                .ToList().ForEach(prop => InjectProperty(instance, prop));
+
+        private static IEnumerable<PropertyInfo> GetInjectableProperties(object instance) =>
             instance
                 .GetType()
                 .GetProperties(Flags)
-                .Where(p => p.GetCustomAttribute<InjectAttribute>() != null)
-                .ToList()
-                .ForEach(p => InjectProperty(instance, p));
+                .Where(IsInjectable);
 
-        private void InjectProperty(object instance, PropertyInfo p) =>
-            p.SetValue(instance, _serviceProvider.GetService(p.PropertyType));
+        private static bool IsInjectable(PropertyInfo prop) =>
+            prop.GetCustomAttribute<InjectAttribute>() != null;
+
+        private void InjectProperty(object instance, PropertyInfo prop) =>
+            prop.SetValue(instance, GetService(prop));
+
+        private object GetService(PropertyInfo prop) =>
+            _serviceProvider.GetService(prop.PropertyType);
     }
 }
