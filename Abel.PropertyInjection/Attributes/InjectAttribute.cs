@@ -2,7 +2,7 @@
 
 namespace Abel.PropertyInjection.Attributes
 {
-    [AttributeUsage(AttributeTargets.Property)]
+    [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field)]
     public class InjectAttribute : Attribute
     {
     }

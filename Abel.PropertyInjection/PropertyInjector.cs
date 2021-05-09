@@ -17,9 +17,14 @@ namespace Abel.PropertyInjection
         public PropertyInjector(IServiceProvider serviceProvider) =>
             _serviceProvider = serviceProvider;
 
-        public void InjectProperties(object instance) =>
+        public void InjectProperties(object instance)
+        {
             GetInjectableProperties(instance)
                 .ToList().ForEach(prop => InjectProperty(instance, prop));
+
+            GetInjectableFields(instance)
+                .ToList().ForEach(field => InjectField(instance, field));
+        }
 
         private static IEnumerable<PropertyInfo> GetInjectableProperties(object instance) =>
             instance
@@ -27,8 +32,17 @@ namespace Abel.PropertyInjection
                 .GetProperties(Flags)
                 .Where(IsInjectable);
 
+        private static IEnumerable<FieldInfo> GetInjectableFields(object instance) =>
+            instance
+                .GetType()
+                .GetFields(Flags)
+                .Where(IsInjectable);
+
         private static bool IsInjectable(PropertyInfo prop) =>
             prop.GetCustomAttribute<InjectAttribute>() != null;
+
+        private static bool IsInjectable(FieldInfo field) =>
+            field.GetCustomAttribute<InjectAttribute>() != null;
 
         private void InjectProperty(object instance, PropertyInfo prop)
         {
@@ -47,6 +61,13 @@ namespace Abel.PropertyInjection
             }
 
             throw new NotInjectableException($"Unable to inject {service.GetType().Name} into property {prop.Name}");
+        }
+
+        private void InjectField(object instance, FieldInfo field)
+        {
+            var service = GetService(field.FieldType);
+
+            SetValue(field, instance, service);
         }
 
         private static void SetValue(PropertyInfo prop, object instance, object value) =>
