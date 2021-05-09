@@ -2,7 +2,7 @@
 using HarmonyLib;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Abel.PropertyInjection
+namespace Abel.PropertyInjection.Infrastructure
 {
     public static class PropertyInjectionInstaller
     {

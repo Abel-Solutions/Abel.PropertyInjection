@@ -11,6 +11,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Abel.PropertyInjection.TestServices\Abel.PropertyInjection.TestServices.csproj" />
     <ProjectReference Include="..\Abel.PropertyInjection\Abel.PropertyInjection.csproj" />
   </ItemGroup>
 

@@ -1,4 +1,5 @@
 ﻿using System;
+using Abel.PropertyInjection.Interfaces;
 
 namespace Abel.PropertyInjection
 {

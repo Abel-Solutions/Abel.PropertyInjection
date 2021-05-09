@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Abel.PropertyInjection.TestApi.Services;
+using Abel.PropertyInjection.TestServices;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 

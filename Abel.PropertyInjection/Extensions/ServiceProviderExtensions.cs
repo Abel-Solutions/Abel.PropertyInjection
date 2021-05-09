@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Abel.PropertyInjection
+namespace Abel.PropertyInjection.Extensions
 {
     public static class ServiceProviderExtensions
     {

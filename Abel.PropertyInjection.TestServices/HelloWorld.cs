@@ -1,4 +1,6 @@
-﻿namespace Abel.PropertyInjection.TestApp.Services
+﻿using Abel.PropertyInjection.Attributes;
+
+namespace Abel.PropertyInjection.TestServices
 {
     public class HelloWorld : IHelloWorld
     {

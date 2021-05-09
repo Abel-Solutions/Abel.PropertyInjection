@@ -1,4 +1,4 @@
-﻿namespace Abel.PropertyInjection
+﻿namespace Abel.PropertyInjection.Interfaces
 {
     public interface IPropertyInjector
     {

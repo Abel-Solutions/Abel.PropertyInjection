@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Linq;
 using System.Reflection;
+using Abel.PropertyInjection.Attributes;
+using Abel.PropertyInjection.Interfaces;
 
 namespace Abel.PropertyInjection
 {

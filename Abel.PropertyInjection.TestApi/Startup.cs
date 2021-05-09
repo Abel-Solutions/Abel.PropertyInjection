@@ -1,4 +1,5 @@
-using Abel.PropertyInjection.TestApi.Services;
+using Abel.PropertyInjection.Infrastructure;
+using Abel.PropertyInjection.TestServices;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;

@@ -1,4 +1,5 @@
-﻿using Abel.PropertyInjection.TestApp.Services;
+﻿using Abel.PropertyInjection.Extensions;
+using Abel.PropertyInjection.TestServices;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Abel.PropertyInjection.TestApp

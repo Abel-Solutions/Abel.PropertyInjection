@@ -1,4 +1,4 @@
-﻿namespace Abel.PropertyInjection.TestApi.Services
+﻿namespace Abel.PropertyInjection.TestServices
 {
     public interface IConsole
     {

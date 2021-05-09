@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Abel.PropertyInjection.TestApp.Services
+namespace Abel.PropertyInjection.TestServices
 {
     public class CustomConsole : IConsole
     {
