@@ -1,5 +1,6 @@
 using Abel.PropertyInjection.Infrastructure;
 using Abel.PropertyInjection.TestServices;
+using Abel.PropertyInjection.TestServices.Interfaces;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -21,7 +22,7 @@ namespace Abel.PropertyInjection.TestApi
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
-            services.AddTransient<IHelloWorld, HelloWorld>();
+            services.AddTransient<IHelloWorld, HelloWorldPublicSet>();
             services.AddTransient<IConsole, CustomConsole>();
             services.AddPropertyInjection();
         }

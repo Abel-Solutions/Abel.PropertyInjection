@@ -1,5 +1,6 @@
 ﻿using Abel.PropertyInjection.Extensions;
 using Abel.PropertyInjection.TestServices;
+using Abel.PropertyInjection.TestServices.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Abel.PropertyInjection.TestApp
@@ -19,7 +20,7 @@ namespace Abel.PropertyInjection.TestApp
 
         private static IServiceCollection ConfigureServices() =>
             new ServiceCollection()
-                .AddTransient<IHelloWorld, HelloWorld>()
+                .AddTransient<IHelloWorld, HelloWorldPublicSet>()
                 .AddTransient<IConsole, CustomConsole>();
                 //.AddPropertyInjection();
     }

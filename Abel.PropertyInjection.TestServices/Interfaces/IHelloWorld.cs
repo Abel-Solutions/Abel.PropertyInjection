@@ -1,4 +1,4 @@
-﻿namespace Abel.PropertyInjection.TestServices
+﻿namespace Abel.PropertyInjection.TestServices.Interfaces
 {
     public interface IHelloWorld
     {

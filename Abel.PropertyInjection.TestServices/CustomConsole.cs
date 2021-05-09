@@ -1,4 +1,5 @@
 ﻿using System;
+using Abel.PropertyInjection.TestServices.Interfaces;
 
 namespace Abel.PropertyInjection.TestServices
 {
