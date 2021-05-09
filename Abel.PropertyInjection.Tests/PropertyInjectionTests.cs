@@ -13,90 +13,25 @@ namespace Abel.PropertyInjection.Tests
     public class PropertyInjectionTests
     {
         [Fact]
-        public void Inject_PublicSetter_IsInjected()
-        {
-            var services = new ServiceCollection()
-                .AddTransient<IHelloWorld, HelloWorldPublicSetter>()
-                .AddTransient<IConsole, CustomConsole>();
-
-            var serviceProvider = services.BuildServiceProvider()
-                .WithPropertyInjections();
-
-            var sb = new StringBuilder();
-
-            Console.SetOut(new StringWriter(sb));
-
-            var helloWorld = serviceProvider.GetService<IHelloWorld>();
-            helloWorld.Hello();
-
-            sb.ToString().Should().Be("Hello World" + Environment.NewLine);
-        }
+        public void Inject_PublicSetter_IsInjected() => TestInjection<HelloWorldPublicSetter>();
 
         [Fact]
-        public void Inject_PrivateSetter_IsInjected()
-        {
-            var services = new ServiceCollection()
-                .AddTransient<IHelloWorld, HelloWorldPrivateSetter>()
-                .AddTransient<IConsole, CustomConsole>();
-
-            var serviceProvider = services.BuildServiceProvider()
-                .WithPropertyInjections();
-
-            var sb = new StringBuilder();
-
-            Console.SetOut(new StringWriter(sb));
-
-            var helloWorld = serviceProvider.GetService<IHelloWorld>();
-            helloWorld.Hello();
-
-            sb.ToString().Should().Be("Hello World" + Environment.NewLine);
-        }
+        public void Inject_PrivateSetter_IsInjected() => TestInjection<HelloWorldPrivateSetter>();
 
         [Fact]
-        public void Inject_NoSetter_IsInjected()
-        {
-            var services = new ServiceCollection()
-                .AddTransient<IHelloWorld, HelloWorldNoSetter>()
-                .AddTransient<IConsole, CustomConsole>();
-
-            var serviceProvider = services.BuildServiceProvider()
-                .WithPropertyInjections();
-
-            var sb = new StringBuilder();
-
-            Console.SetOut(new StringWriter(sb));
-
-            var helloWorld = serviceProvider.GetService<IHelloWorld>();
-            helloWorld.Hello();
-
-            sb.ToString().Should().Be("Hello World" + Environment.NewLine);
-        }
+        public void Inject_NoSetter_IsInjected() => TestInjection<HelloWorldNoSetter>();
 
         [Fact]
-        public void Inject_PublicField_IsInjected()
-        {
-            var services = new ServiceCollection()
-                .AddTransient<IHelloWorld, HelloWorldPublicField>()
-                .AddTransient<IConsole, CustomConsole>();
-
-            var serviceProvider = services.BuildServiceProvider()
-                .WithPropertyInjections();
-
-            var sb = new StringBuilder();
-
-            Console.SetOut(new StringWriter(sb));
-
-            var helloWorld = serviceProvider.GetService<IHelloWorld>();
-            helloWorld.Hello();
-
-            sb.ToString().Should().Be("Hello World" + Environment.NewLine);
-        }
+        public void Inject_PublicField_IsInjected() => TestInjection<HelloWorldPublicField>();
 
         [Fact]
-        public void Inject_PrivateField_IsInjected()
+        public void Inject_PrivateField_IsInjected() => TestInjection<HelloWorldPrivateField>();
+
+        private static void TestInjection<T>()
+            where T : class, IHelloWorld
         {
             var services = new ServiceCollection()
-                .AddTransient<IHelloWorld, HelloWorldPrivateField>()
+                .AddTransient<IHelloWorld, T>()
                 .AddTransient<IConsole, CustomConsole>();
 
             var serviceProvider = services.BuildServiceProvider()
