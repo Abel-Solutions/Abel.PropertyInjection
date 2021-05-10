@@ -11,19 +11,14 @@ namespace Abel.PropertyInjection
     {
         private const BindingFlags Flags = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static;
 
-        private IServiceProvider _serviceProvider;
+        private readonly IServiceProvider _serviceProvider;
 
         public PropertyInjector(IServiceProvider serviceProvider) =>
             _serviceProvider = serviceProvider;
 
-        public object InjectProperties(object instance, IServiceProvider serviceProvider = null)
+        public object InjectProperties(object instance)
         {
-            if (serviceProvider != null)
-            {
-                _serviceProvider = serviceProvider;
-            }
-            GetInjectableMembers(instance)
-                .ToList().ForEach(member => InjectMember(instance, member));
+            GetInjectableMembers(instance).ToList().ForEach(member => InjectMember(instance, member));
             return instance;
         }
 

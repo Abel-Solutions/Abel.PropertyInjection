@@ -15,12 +15,8 @@ namespace Abel.PropertyInjection
             _propertyInjector = propertyInjector;
         }
 
-        public object CreateController(ControllerContext context)
-        {
-            var controller = _controllerActivator.Create(context);
-            _propertyInjector.InjectProperties(controller, context.HttpContext.RequestServices);
-            return controller;
-        }
+        public object CreateController(ControllerContext context) =>
+            _propertyInjector.InjectProperties(_controllerActivator.Create(context));
 
         public void ReleaseController(ControllerContext context, object controller) =>
             _controllerActivator.Release(context, controller);

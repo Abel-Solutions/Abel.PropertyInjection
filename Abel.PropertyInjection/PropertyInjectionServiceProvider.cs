@@ -14,18 +14,19 @@ namespace Abel.PropertyInjection
 
         public PropertyInjectionServiceProvider(IServiceCollection services)
         {
+            InjectServices(services);
+            _serviceProvider = services.BuildServiceProvider();
             _propertyInjector = new PropertyInjector(_serviceProvider);
+        }
 
+        private void InjectServices(IServiceCollection services) =>
             services
                 .Where(IsInjectable)
                 .ToList()
                 .ForEach(descriptor => InjectDescriptor(services, descriptor));
 
-            _serviceProvider = services.BuildServiceProvider();
-        }
-
-        public object GetService(Type serviceType) => 
-            _propertyInjector.InjectProperties(_serviceProvider.GetService(serviceType), _serviceProvider);
+        public object GetService(Type serviceType) =>
+            _propertyInjector.InjectProperties(_serviceProvider.GetService(serviceType));
 
         private static bool IsInjectable(ServiceDescriptor service) =>
             service.ImplementationType != null &&
@@ -36,29 +37,22 @@ namespace Abel.PropertyInjection
 
         private Func<IServiceProvider, object> GetFactory(ServiceDescriptor service) =>
             serviceProvider =>
-                _propertyInjector.InjectProperties(CreateInstance(service, serviceProvider), serviceProvider);
+                _propertyInjector.InjectProperties(CreateInstance(service, serviceProvider));
 
-        private static object CreateInstance(ServiceDescriptor descriptor, IServiceProvider serviceProvider)
-        {
-            var implementationInstance = descriptor.ImplementationInstance;
-            if (implementationInstance != null)
-            {
-                return implementationInstance;
-            }
+        private static object CreateInstance(ServiceDescriptor descriptor, IServiceProvider serviceProvider) =>
+            GetImplementationInstance(descriptor) ??
+            CreateImplementationInstance(descriptor, serviceProvider) ??
+            CreateImplementationFromFactory(descriptor, serviceProvider);
 
-            var implementationType = descriptor.ImplementationType;
-            if (implementationType != null)
-            {
-                return ActivatorUtilities.CreateInstance(serviceProvider, implementationType);
-            }
+        private static object GetImplementationInstance(ServiceDescriptor descriptor) =>
+            descriptor.ImplementationInstance;
 
-            var implementationFactory = descriptor.ImplementationFactory;
-            if (implementationFactory != null)
-            {
-                return implementationFactory.Invoke(serviceProvider);
-            }
+        private static object CreateImplementationInstance(ServiceDescriptor descriptor, IServiceProvider serviceProvider) =>
+            descriptor.ImplementationType is var type and not null ?
+                ActivatorUtilities.CreateInstance(serviceProvider, type) :
+                null;
 
-            throw new NotSupportedException(); // todo cleanup
-        }
+        private static object CreateImplementationFromFactory(ServiceDescriptor descriptor, IServiceProvider serviceProvider) =>
+            descriptor.ImplementationFactory?.Invoke(serviceProvider);
     }
 }
