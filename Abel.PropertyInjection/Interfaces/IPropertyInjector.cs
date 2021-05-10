@@ -4,6 +4,6 @@ namespace Abel.PropertyInjection.Interfaces
 {
     public interface IPropertyInjector
     {
-        void InjectProperties(object instance, IServiceProvider serviceProvider);
+        object InjectProperties(object instance, IServiceProvider serviceProvider);
     }
 }

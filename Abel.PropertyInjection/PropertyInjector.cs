@@ -16,7 +16,7 @@ namespace Abel.PropertyInjection
         public PropertyInjector(IServiceProvider serviceProvider) =>
             _serviceProvider = serviceProvider;
 
-        public void InjectProperties(object instance, IServiceProvider serviceProvider = null)
+        public object InjectProperties(object instance, IServiceProvider serviceProvider = null)
         {
             if (serviceProvider != null)
             {
@@ -24,6 +24,7 @@ namespace Abel.PropertyInjection
             }
             GetInjectableMembers(instance)
                 .ToList().ForEach(member => InjectMember(instance, member));
+            return instance;
         }
 
         private static IEnumerable<MemberInfo> GetInjectableMembers(object instance) =>

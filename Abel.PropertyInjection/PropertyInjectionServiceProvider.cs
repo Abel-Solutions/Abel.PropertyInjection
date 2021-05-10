@@ -24,12 +24,8 @@ namespace Abel.PropertyInjection
             _serviceProvider = services.BuildServiceProvider();
         }
 
-        public object GetService(Type serviceType)
-        {
-            var service = _serviceProvider.GetService(serviceType);
-            _propertyInjector.InjectProperties(service, _serviceProvider);
-            return service;
-        }
+        public object GetService(Type serviceType) => 
+            _propertyInjector.InjectProperties(_serviceProvider.GetService(serviceType), _serviceProvider);
 
         private static bool IsInjectable(ServiceDescriptor service) =>
             service.ImplementationType != null &&
@@ -40,11 +36,7 @@ namespace Abel.PropertyInjection
 
         private Func<IServiceProvider, object> GetFactory(ServiceDescriptor service) =>
             serviceProvider =>
-            {
-                var instance = CreateInstance(service, serviceProvider);
-                _propertyInjector.InjectProperties(instance, serviceProvider);
-                return instance;
-            };
+                _propertyInjector.InjectProperties(CreateInstance(service, serviceProvider), serviceProvider);
 
         private static object CreateInstance(ServiceDescriptor descriptor, IServiceProvider serviceProvider)
         {
