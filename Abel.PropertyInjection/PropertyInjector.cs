@@ -16,9 +16,12 @@ namespace Abel.PropertyInjection
         public PropertyInjector(IServiceProvider serviceProvider) =>
             _serviceProvider = serviceProvider;
 
-        public void InjectProperties(object instance, IServiceProvider serviceProvider)
+        public void InjectProperties(object instance, IServiceProvider serviceProvider = null)
         {
-            _serviceProvider = serviceProvider;
+            if (serviceProvider != null)
+            {
+                _serviceProvider = serviceProvider;
+            }
             GetInjectableMembers(instance)
                 .ToList().ForEach(member => InjectMember(instance, member));
         }
@@ -30,7 +33,7 @@ namespace Abel.PropertyInjection
                 .Where(IsInjectable);
 
         private static bool IsInjectable(MemberInfo member) =>
-            member.GetCustomAttribute<InjectAttribute>() != null;
+            member.IsDefined(typeof(InjectAttribute));
 
         private void InjectMember(object instance, MemberInfo member)
         {

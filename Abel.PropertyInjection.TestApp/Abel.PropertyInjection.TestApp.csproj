@@ -12,13 +12,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Abel.PropertyInjection.TestServices\Abel.PropertyInjection.TestServices.csproj" />
-    <ProjectReference Include="..\Abel.PropertyInjection\Abel.PropertyInjection.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Reference Include="Microsoft.Extensions.Hosting">
-      <HintPath>..\..\..\..\..\..\Program Files\dotnet\shared\Microsoft.AspNetCore.App\5.0.5\Microsoft.Extensions.Hosting.dll</HintPath>
-    </Reference>
   </ItemGroup>
 
 </Project>

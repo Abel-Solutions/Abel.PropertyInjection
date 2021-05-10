@@ -1,4 +1,5 @@
-﻿using Abel.PropertyInjection.Infrastructure;
+﻿using System.Threading.Tasks;
+using Abel.PropertyInjection.Infrastructure;
 using Abel.PropertyInjection.TestServices;
 using Abel.PropertyInjection.TestServices.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
@@ -8,11 +9,13 @@ namespace Abel.PropertyInjection.TestApp
 {
     public static class Program
     {
-        public static void Main() =>
-            new HostBuilder()
+        public static async Task Main()
+        {
+            var builder = Host.CreateDefaultBuilder()
                 .ConfigureServices(ConfigureServices)
-                .UsePropertyInjection()
-                .Build().Run();
+                .UsePropertyInjection();
+            await builder.RunConsoleAsync();
+        }
 
         private static void ConfigureServices(IServiceCollection serviceCollection) =>
             serviceCollection

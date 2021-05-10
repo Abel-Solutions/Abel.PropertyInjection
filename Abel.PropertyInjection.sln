@@ -7,9 +7,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Abel.PropertyInjection.Test
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Abel.PropertyInjection", "Abel.PropertyInjection\Abel.PropertyInjection.csproj", "{9707A6D9-9DA3-4885-8A71-6A98414C13B0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Abel.PropertyInjection.TestApp", "Abel.PropertyInjection.TestApp\Abel.PropertyInjection.TestApp.csproj", "{B305E487-00F1-43AC-8A8E-BD91B9501913}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Abel.PropertyInjection.TestApp", "Abel.PropertyInjection.TestApp\Abel.PropertyInjection.TestApp.csproj", "{B305E487-00F1-43AC-8A8E-BD91B9501913}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Abel.PropertyInjection.TestServices", "Abel.PropertyInjection.TestServices\Abel.PropertyInjection.TestServices.csproj", "{54C2010C-D25B-43B4-84F5-F3B0BD29DEC7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Abel.PropertyInjection.TestServices", "Abel.PropertyInjection.TestServices\Abel.PropertyInjection.TestServices.csproj", "{54C2010C-D25B-43B4-84F5-F3B0BD29DEC7}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Abel.PropertyInjection.Tests", "Abel.PropertyInjection.Tests\Abel.PropertyInjection.Tests.csproj", "{A08214E7-384C-4C1F-BD73-CB9E5D322461}"
 EndProject
