@@ -40,17 +40,12 @@ namespace Abel.PropertyInjection.Tests
             var sb = new StringBuilder();
             Console.SetOut(new StringWriter(sb));
 
-            var ye = Host.CreateDefaultBuilder()
+            await Host.CreateDefaultBuilder()
                 .ConfigureServices(ConfigureServices<TService>)
                 .UsePropertyInjection()
-                .UseConsoleLifetime()
-                .Build();
+                .RunConsoleAsync();
 
-            await ye.StartAsync();
-
-            sb.ToString().Should().Be("Hello World" + Environment.NewLine);
-
-            await ye.StopAsync();
+            sb.ToString().Should().StartWith("Hello World");
         }
 
         private static void ConfigureServices<TService>(IServiceCollection services)

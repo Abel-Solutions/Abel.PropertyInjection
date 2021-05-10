@@ -16,13 +16,11 @@ namespace Abel.PropertyInjection.TestServices
         public Task StartAsync(CancellationToken cancellationToken)
         {
             Hello();
-            return Task.CompletedTask;
-        }
-
-        public Task StopAsync(CancellationToken cancellationToken)
-        {
             AppLifetime.StopApplication();
             return Task.CompletedTask;
         }
+
+        public Task StopAsync(CancellationToken cancellationToken) => 
+            Task.CompletedTask;
     }
 }
