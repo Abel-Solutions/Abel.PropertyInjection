@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using Abel.PropertyInjection.Attributes;
+using Abel.PropertyInjection.Exceptions;
 using Abel.PropertyInjection.Interfaces;
 
 namespace Abel.PropertyInjection
@@ -29,7 +30,7 @@ namespace Abel.PropertyInjection
                 .Where(IsInjectable);
 
         private static bool IsInjectable(MemberInfo member) =>
-            member.IsDefined(typeof(InjectAttribute));
+            member.IsDefined(typeof(InjectAttribute), true);
 
         private void InjectMember(object instance, MemberInfo member)
         {
@@ -57,9 +58,11 @@ namespace Abel.PropertyInjection
             field.SetValue(instance, GetService(field.FieldType));
 
         private static FieldInfo GetBackingField(PropertyInfo prop) =>
-            prop.DeclaringType.GetField($"<{prop.Name}>k__BackingField", Flags);
+            prop.DeclaringType.GetField($"<{prop.Name}>k__BackingField", Flags) ??
+            throw new PropertyInjectionException($"Could not find backing field of read-only property {prop.Name}");
 
         private object GetService(Type type) =>
-            _serviceProvider.GetService(type);
+            _serviceProvider.GetService(type) ??
+            throw new PropertyInjectionException($"Could not find service for type {type.Name}");
     }
 }

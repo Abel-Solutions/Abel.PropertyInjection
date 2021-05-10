@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using Abel.PropertyInjection.Attributes;
+using Abel.PropertyInjection.Exceptions;
 using Abel.PropertyInjection.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
@@ -30,7 +31,7 @@ namespace Abel.PropertyInjection
 
         private static bool IsInjectable(ServiceDescriptor service) =>
             service.ImplementationType != null &&
-            service.ImplementationType.GetMembers().Any(m => m.IsDefined(typeof(InjectAttribute), false));
+            service.ImplementationType.GetMembers().Any(m => m.IsDefined(typeof(InjectAttribute), true));
 
         private void InjectDescriptor(IServiceCollection defaultServiceCollection, ServiceDescriptor service) =>
             defaultServiceCollection.Replace(new ServiceDescriptor(service.ServiceType, GetFactory(service), service.Lifetime));
@@ -42,7 +43,8 @@ namespace Abel.PropertyInjection
         private static object CreateInstance(ServiceDescriptor descriptor, IServiceProvider serviceProvider) =>
             GetImplementationInstance(descriptor) ??
             CreateImplementationInstance(descriptor, serviceProvider) ??
-            CreateImplementationFromFactory(descriptor, serviceProvider);
+            CreateImplementationFromFactory(descriptor, serviceProvider) ??
+            throw new PropertyInjectionException($"Could not create instance for descriptor {descriptor.ServiceType.Name}");
 
         private static object GetImplementationInstance(ServiceDescriptor descriptor) =>
             descriptor.ImplementationInstance;
