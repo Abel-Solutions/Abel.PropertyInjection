@@ -19,28 +19,22 @@ namespace Abel.PropertyInjection
 
         public object InjectProperties(object instance) // todo
         {
-            var memberInfos = GetInjectableMembers(instance.GetType()).ToList();
-            if (memberInfos.Any())
-            {
-                memberInfos.ForEach(member => InjectMember(instance, member));
-            }
-
-            if (instance.GetType().BaseType != null)
-            {
-                var infos = GetInjectableMembers(instance.GetType().BaseType).ToList();
-                if (infos.Any())
-                {
-                    infos.ForEach(member => InjectMember(instance, member));
-                }
-            }
-
+            GetInjectableMembers(instance.GetType(), new List<MemberInfo>())
+                .ToList().ForEach(member => InjectMember(instance, member));
             return instance;
         }
 
-        private static IEnumerable<MemberInfo> GetInjectableMembers(Type type) =>
-            type
+        private static IEnumerable<MemberInfo> GetInjectableMembers(Type type, List<MemberInfo> injectableMembers)
+        {
+            injectableMembers
+                .AddRange(type
                 .GetMembers(Binding)
-                .Where(IsInjectable);
+                .Where(IsInjectable));
+
+            return type.BaseType == null
+                ? injectableMembers
+                : GetInjectableMembers(type.BaseType, injectableMembers);
+        }
 
         private static bool IsInjectable(MemberInfo member) =>
             member.IsDefined(typeof(InjectAttribute), true);
