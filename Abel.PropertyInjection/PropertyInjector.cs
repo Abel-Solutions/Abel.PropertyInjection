@@ -10,8 +10,6 @@ namespace Abel.PropertyInjection
 {
     public class PropertyInjector : IPropertyInjector
     {
-        private const BindingFlags Binding = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static;
-
         private readonly IPropertyInjectionServiceProvider _serviceProvider;
 
         public PropertyInjector(IPropertyInjectionServiceProvider serviceProvider) =>
@@ -19,7 +17,7 @@ namespace Abel.PropertyInjection
 
         public object InjectProperties(object instance)
         {
-            instance.GetType().GetMembersByAttribute<InjectAttribute>()
+            instance.GetType().GetAllMembersInHierarchyByAttribute<InjectAttribute>()
                 .ToList().ForEach(member => InjectMember(instance, member));
             return instance;
         }
@@ -50,7 +48,7 @@ namespace Abel.PropertyInjection
             field.SetValue(instance, GetService(field.FieldType));
 
         private static FieldInfo GetBackingField(PropertyInfo prop) =>
-            prop.DeclaringType.GetField($"<{prop.Name}>k__BackingField", Binding) ??
+            prop.DeclaringType.GetAnyField($"<{prop.Name}>k__BackingField") ??
             throw new PropertyInjectionException($"Could not find backing field of read-only property {prop.Name}");
 
         private object GetService(Type type) =>

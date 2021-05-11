@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Linq;
-using System.Reflection;
 using Abel.PropertyInjection.Attributes;
 using Abel.PropertyInjection.Exceptions;
 using Abel.PropertyInjection.Extensions;
@@ -30,25 +29,12 @@ namespace Abel.PropertyInjection
                 .ToList()
                 .ForEach(descriptor => InjectDescriptor(services, descriptor));
 
-        public object GetService(Type serviceType) // todo
-        {
-            var instance = _originalServiceProvider.GetService(serviceType);
+        public object GetService(Type serviceType) => 
+            _propertyInjector.InjectProperties(_originalServiceProvider.GetServiceInHierarchy(serviceType, _services));
 
-            if (instance == null)
-            {
-                var assignableTo = _services.Where(s => s.ServiceType.IsAssignableTo(serviceType));
-                if (assignableTo.Any())
-                {
-                    instance = _originalServiceProvider.GetService(assignableTo.First().ServiceType);
-                }
-            }
-
-            return _propertyInjector.InjectProperties(instance);
-        }
-
-        private static bool IsInjectable(ServiceDescriptor descriptor) => // todo use CreateInstance
+        private static bool IsInjectable(ServiceDescriptor descriptor) => // todo use CreateInstance?
             descriptor.ImplementationType != null &&
-            descriptor.ImplementationType.GetMembersByAttribute<InjectAttribute>().Any();
+            descriptor.ImplementationType.GetAllMembersInHierarchyByAttribute<InjectAttribute>().Any();
 
         private void InjectDescriptor(IServiceCollection defaultServiceCollection, ServiceDescriptor service) =>
             defaultServiceCollection.Replace(new ServiceDescriptor(service.ServiceType, GetFactory(service), service.Lifetime));
@@ -58,8 +44,8 @@ namespace Abel.PropertyInjection
 
         private object CreateInstance(ServiceDescriptor descriptor) =>
             GetImplementationInstance(descriptor) ??
-            CreateImplementationInstance(descriptor) ??
-            CreateImplementationFromFactory(descriptor) ??
+            CreateImplementationInstance(descriptor) ?? // todo test
+            CreateImplementationFromFactory(descriptor) ?? // todo test
             throw new PropertyInjectionException($"Could not create instance for descriptor {descriptor.ServiceType.Name}");
 
         private static object GetImplementationInstance(ServiceDescriptor descriptor) =>
