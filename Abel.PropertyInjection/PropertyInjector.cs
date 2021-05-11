@@ -10,23 +10,36 @@ namespace Abel.PropertyInjection
 {
     public class PropertyInjector : IPropertyInjector
     {
-        private const BindingFlags Flags = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static;
+        private const BindingFlags Binding = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static;
 
-        private readonly IServiceProvider _serviceProvider;
+        private readonly IPropertyInjectionServiceProvider _serviceProvider;
 
-        public PropertyInjector(IServiceProvider serviceProvider) =>
+        public PropertyInjector(IPropertyInjectionServiceProvider serviceProvider) =>
             _serviceProvider = serviceProvider;
 
-        public object InjectProperties(object instance)
+        public object InjectProperties(object instance) // todo
         {
-            GetInjectableMembers(instance).ToList().ForEach(member => InjectMember(instance, member));
+            var memberInfos = GetInjectableMembers(instance.GetType()).ToList();
+            if (memberInfos.Any())
+            {
+                memberInfos.ForEach(member => InjectMember(instance, member));
+            }
+
+            if (instance.GetType().BaseType != null)
+            {
+                var infos = GetInjectableMembers(instance.GetType().BaseType).ToList();
+                if (infos.Any())
+                {
+                    infos.ForEach(member => InjectMember(instance, member));
+                }
+            }
+
             return instance;
         }
 
-        private static IEnumerable<MemberInfo> GetInjectableMembers(object instance) =>
-            instance
-                .GetType()
-                .GetMembers(Flags)
+        private static IEnumerable<MemberInfo> GetInjectableMembers(Type type) =>
+            type
+                .GetMembers(Binding)
                 .Where(IsInjectable);
 
         private static bool IsInjectable(MemberInfo member) =>
@@ -58,11 +71,11 @@ namespace Abel.PropertyInjection
             field.SetValue(instance, GetService(field.FieldType));
 
         private static FieldInfo GetBackingField(PropertyInfo prop) =>
-            prop.DeclaringType.GetField($"<{prop.Name}>k__BackingField", Flags) ??
+            prop.DeclaringType.GetField($"<{prop.Name}>k__BackingField", Binding) ??
             throw new PropertyInjectionException($"Could not find backing field of read-only property {prop.Name}");
 
         private object GetService(Type type) =>
             _serviceProvider.GetService(type) ??
-            throw new PropertyInjectionException($"Could not find service for type {type.Name}");
+                   throw new PropertyInjectionException($"Could not find service for type {type.Name}");
     }
 }
