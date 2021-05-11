@@ -1,10 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using Abel.PropertyInjection.Attributes;
 using Abel.PropertyInjection.Exceptions;
 using Abel.PropertyInjection.Interfaces;
+using Abel.PropertyInjection.Extensions;
 
 namespace Abel.PropertyInjection
 {
@@ -19,25 +19,10 @@ namespace Abel.PropertyInjection
 
         public object InjectProperties(object instance) // todo
         {
-            GetInjectableMembers(instance.GetType(), new List<MemberInfo>())
+            instance.GetType().GetMembersWithAttribute<InjectAttribute>()
                 .ToList().ForEach(member => InjectMember(instance, member));
             return instance;
         }
-
-        private static IEnumerable<MemberInfo> GetInjectableMembers(Type type, List<MemberInfo> injectableMembers)
-        {
-            injectableMembers
-                .AddRange(type
-                .GetMembers(Binding)
-                .Where(IsInjectable));
-
-            return type.BaseType == null
-                ? injectableMembers
-                : GetInjectableMembers(type.BaseType, injectableMembers);
-        }
-
-        private static bool IsInjectable(MemberInfo member) =>
-            member.IsDefined(typeof(InjectAttribute), true);
 
         private void InjectMember(object instance, MemberInfo member)
         {
