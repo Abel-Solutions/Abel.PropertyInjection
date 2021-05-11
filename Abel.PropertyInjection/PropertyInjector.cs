@@ -17,9 +17,9 @@ namespace Abel.PropertyInjection
         public PropertyInjector(IPropertyInjectionServiceProvider serviceProvider) =>
             _serviceProvider = serviceProvider;
 
-        public object InjectProperties(object instance) // todo
+        public object InjectProperties(object instance)
         {
-            instance.GetType().GetMembersWithAttribute<InjectAttribute>()
+            instance.GetType().GetMembersByAttribute<InjectAttribute>()
                 .ToList().ForEach(member => InjectMember(instance, member));
             return instance;
         }
