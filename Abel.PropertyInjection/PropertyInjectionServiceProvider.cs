@@ -3,6 +3,7 @@ using System.Linq;
 using System.Reflection;
 using Abel.PropertyInjection.Attributes;
 using Abel.PropertyInjection.Exceptions;
+using Abel.PropertyInjection.Extensions;
 using Abel.PropertyInjection.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
@@ -45,22 +46,9 @@ namespace Abel.PropertyInjection
             return _propertyInjector.InjectProperties(instance);
         }
 
-        private static bool IsInjectable(ServiceDescriptor service) // todo
-        {
-            var lol = service.ImplementationType != null &&
-                              service.ImplementationType
-                                  .GetMembers(BindingFlags.Instance | BindingFlags.Static | BindingFlags.NonPublic |
-                                              BindingFlags.Public)
-                                  .Any(m => m.IsDefined(typeof(InjectAttribute), true));
-
-            if (lol) return true;
-
-            return service.ImplementationType?.BaseType != null &&
-                      service.ImplementationType.BaseType
-                          .GetMembers(BindingFlags.Instance | BindingFlags.Static | BindingFlags.NonPublic |
-                                      BindingFlags.Public)
-                          .Any(m => m.IsDefined(typeof(InjectAttribute), true));
-        }
+        private static bool IsInjectable(ServiceDescriptor descriptor) => // todo use CreateInstance
+            descriptor.ImplementationType != null &&
+            descriptor.ImplementationType.GetMembersByAttribute<InjectAttribute>().Any();
 
         private void InjectDescriptor(IServiceCollection defaultServiceCollection, ServiceDescriptor service) =>
             defaultServiceCollection.Replace(new ServiceDescriptor(service.ServiceType, GetFactory(service), service.Lifetime));
