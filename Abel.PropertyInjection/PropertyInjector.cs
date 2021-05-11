@@ -1,35 +1,26 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using Abel.PropertyInjection.Attributes;
+using Abel.PropertyInjection.Exceptions;
 using Abel.PropertyInjection.Interfaces;
+using Abel.PropertyInjection.Extensions;
 
 namespace Abel.PropertyInjection
 {
     public class PropertyInjector : IPropertyInjector
     {
-        private const BindingFlags Flags = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static;
+        private readonly IPropertyInjectionServiceProvider _serviceProvider;
 
-        private readonly IServiceProvider _serviceProvider;
-
-        public PropertyInjector(IServiceProvider serviceProvider) =>
+        public PropertyInjector(IPropertyInjectionServiceProvider serviceProvider) =>
             _serviceProvider = serviceProvider;
 
         public object InjectProperties(object instance)
         {
-            GetInjectableMembers(instance).ToList().ForEach(member => InjectMember(instance, member));
+            instance.GetType().GetAllMembersInHierarchyByAttribute<InjectAttribute>()
+                .ToList().ForEach(member => InjectMember(instance, member));
             return instance;
         }
-
-        private static IEnumerable<MemberInfo> GetInjectableMembers(object instance) =>
-            instance
-                .GetType()
-                .GetMembers(Flags)
-                .Where(IsInjectable);
-
-        private static bool IsInjectable(MemberInfo member) =>
-            member.IsDefined(typeof(InjectAttribute));
 
         private void InjectMember(object instance, MemberInfo member)
         {
@@ -57,9 +48,11 @@ namespace Abel.PropertyInjection
             field.SetValue(instance, GetService(field.FieldType));
 
         private static FieldInfo GetBackingField(PropertyInfo prop) =>
-            prop.DeclaringType.GetField($"<{prop.Name}>k__BackingField", Flags);
+            prop.DeclaringType.GetAnyField($"<{prop.Name}>k__BackingField") ??
+            throw new PropertyInjectionException($"Could not find backing field of read-only property {prop.Name}");
 
         private object GetService(Type type) =>
-            _serviceProvider.GetService(type);
+            _serviceProvider.GetService(type) ??
+                   throw new PropertyInjectionException($"Could not find service for type {type.Name}");
     }
 }
