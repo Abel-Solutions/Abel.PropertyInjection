@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Linq;
 using Abel.PropertyInjection.Attributes;
-using Abel.PropertyInjection.Exceptions;
 using Abel.PropertyInjection.Extensions;
 using Abel.PropertyInjection.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
@@ -17,55 +16,66 @@ namespace Abel.PropertyInjection
 
         public PropertyInjectionServiceProvider(IServiceCollection services)
         {
+            _propertyInjector = new PropertyInjector(this);
             _services = services.AddSingleton<IPropertyInjectionServiceProvider>(this); // todo
+            _originalServiceProvider = services.BuildServiceProvider(); // todo
             InjectServices(services);
             _originalServiceProvider = services.BuildServiceProvider();
-            _propertyInjector = new PropertyInjector(this);
         }
 
         private void InjectServices(IServiceCollection services) =>
             services
-                .Where(IsInjectable)
                 .ToList()
-                .ForEach(descriptor => InjectDescriptor(services, descriptor));
+                .ForEach(InjectDescriptor);
 
-        public object GetService(Type serviceType) => 
-            _propertyInjector.InjectProperties(GetAnyOriginalService(serviceType));
+        public object GetService(Type serviceType) =>
+            GetAnyOriginalService(serviceType) is var service and not null ?
+                _propertyInjector.InjectProperties(service) :
+                null;
 
         private object GetAnyOriginalService(Type type) =>
-            _originalServiceProvider.GetService(type) ??
-            _originalServiceProvider.GetService(GetAssignableService(type));
+            GetOriginalService(type) ??
+            GetOriginalService(GetAssignableService(type));
+
+        private object GetOriginalService(Type type) =>
+            type == null ? null : _originalServiceProvider.GetService(type);
 
         private Type GetAssignableService(Type type) =>
-            _services.FirstOrDefault(s => s.ServiceType.IsAssignableTo(type)).ServiceType;
+            _services.FirstOrDefault(s => s.ServiceType.IsAssignableTo(type))?.ServiceType;
 
-        private bool IsInjectable(ServiceDescriptor descriptor)
+        private static bool IsInjectable(object service) =>
+            service != null && service.GetType().GetAllMembersByAttribute<InjectAttribute>().Any();
+
+        private void InjectDescriptor(ServiceDescriptor descriptor)
         {
-            //var service = CreateInstance(descriptor);
-            return descriptor.ImplementationType != null &&
-                   descriptor.ImplementationType.GetAllMembersByAttribute<InjectAttribute>().Any();
-            //return service.GetType().GetAllMembersInHierarchyByAttribute<InjectAttribute>().Any();
+            if (CreateInstance(descriptor) is var service && IsInjectable(service))
+            {
+                ReplaceDescriptor(descriptor, service);
+            }
         }
 
-        private void InjectDescriptor(IServiceCollection defaultServiceCollection, ServiceDescriptor service) =>
-            defaultServiceCollection.Replace(new ServiceDescriptor(service.ServiceType, GetFactory(service), service.Lifetime));
+        private void ReplaceDescriptor(ServiceDescriptor descriptor, object service) =>
+            _services.Replace(new ServiceDescriptor(descriptor.ServiceType, GetFactory(service), descriptor.Lifetime));
 
-        private Func<IServiceProvider, object> GetFactory(ServiceDescriptor service) =>
-            _ => _propertyInjector.InjectProperties(CreateInstance(service));
+        private Func<IServiceProvider, object> GetFactory(object instance) =>
+            _ => _propertyInjector.InjectProperties(instance);
 
         private object CreateInstance(ServiceDescriptor descriptor) =>
             GetImplementationInstance(descriptor) ??
-            CreateImplementationInstance(descriptor) ?? // todo test
-            CreateImplementationFromFactory(descriptor) ?? // todo test
-            throw new PropertyInjectionException($"Could not create instance for descriptor {descriptor.ServiceType.Name}");
+            CreateImplementationInstance(descriptor) ??
+            CreateImplementationFromFactory(descriptor);
 
         private static object GetImplementationInstance(ServiceDescriptor descriptor) =>
             descriptor.ImplementationInstance;
 
         private object CreateImplementationInstance(ServiceDescriptor descriptor) =>
-            descriptor.ImplementationType is var type and not null ?
-                ActivatorUtilities.CreateInstance(this, type) :
-                null;
+            descriptor.ImplementationType is { IsGenericTypeDefinition: false } type ? ActivateInstance(type) : null;
+
+        private object ActivateInstance(Type type)
+        {
+            try { return ActivatorUtilities.CreateInstance(this, type); }
+            catch { return null; }
+        }
 
         private object CreateImplementationFromFactory(ServiceDescriptor descriptor) =>
             descriptor.ImplementationFactory?.Invoke(this);
