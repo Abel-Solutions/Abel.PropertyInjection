@@ -1,12 +1,9 @@
-using System;
-using Abel.PropertyInjection.Infrastructure;
 using Abel.PropertyInjection.TestServices;
 using Abel.PropertyInjection.TestServices.Interfaces;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
 
 namespace Abel.PropertyInjection.TestApi

@@ -1,4 +1,3 @@
-using System.Diagnostics.Eventing.Reader;
 using Abel.PropertyInjection.Infrastructure;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
