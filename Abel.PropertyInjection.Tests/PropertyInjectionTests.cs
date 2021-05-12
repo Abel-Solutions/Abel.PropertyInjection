@@ -34,6 +34,10 @@ namespace Abel.PropertyInjection.Tests
         public async Task Inject_PrivateField_IsInjected() =>
             await TestInjection<HelloWorldPrivateField>();
 
+        [Fact]
+        public async Task Inject_ReadonlyField_IsInjected() =>
+            await TestInjection<HelloWorldReadonlyField>();
+
         private static async Task TestInjection<TService>()
             where TService : class, IHostedService
         {

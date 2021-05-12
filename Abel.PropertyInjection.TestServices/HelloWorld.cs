@@ -9,14 +9,14 @@ namespace Abel.PropertyInjection.TestServices
     public abstract class HelloWorld : IHelloWorld, IHostedService
     {
         [Inject]
-        public IHostApplicationLifetime AppLifetime { get; set; }
+        private IHostApplicationLifetime _appLifetime;
 
         public abstract void Hello();
 
         public Task StartAsync(CancellationToken cancellationToken)
         {
             Hello();
-            AppLifetime.StopApplication();
+            _appLifetime.StopApplication();
             return Task.CompletedTask;
         }
 
