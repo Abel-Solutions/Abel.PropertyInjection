@@ -30,11 +30,22 @@ namespace Abel.PropertyInjection
                 .ForEach(descriptor => InjectDescriptor(services, descriptor));
 
         public object GetService(Type serviceType) => 
-            _propertyInjector.InjectProperties(_originalServiceProvider.GetServiceInHierarchy(serviceType, _services));
+            _propertyInjector.InjectProperties(GetAnyOriginalService(serviceType));
 
-        private static bool IsInjectable(ServiceDescriptor descriptor) => // todo use CreateInstance?
-            descriptor.ImplementationType != null &&
-            descriptor.ImplementationType.GetAllMembersInHierarchyByAttribute<InjectAttribute>().Any();
+        private object GetAnyOriginalService(Type type) =>
+            _originalServiceProvider.GetService(type) ??
+            _originalServiceProvider.GetService(GetAssignableService(type));
+
+        private Type GetAssignableService(Type type) =>
+            _services.FirstOrDefault(s => s.ServiceType.IsAssignableTo(type)).ServiceType;
+
+        private bool IsInjectable(ServiceDescriptor descriptor)
+        {
+            //var service = CreateInstance(descriptor);
+            return descriptor.ImplementationType != null &&
+                   descriptor.ImplementationType.GetAllMembersByAttribute<InjectAttribute>().Any();
+            //return service.GetType().GetAllMembersInHierarchyByAttribute<InjectAttribute>().Any();
+        }
 
         private void InjectDescriptor(IServiceCollection defaultServiceCollection, ServiceDescriptor service) =>
             defaultServiceCollection.Replace(new ServiceDescriptor(service.ServiceType, GetFactory(service), service.Lifetime));

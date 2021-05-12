@@ -45,17 +45,33 @@ namespace Abel.PropertyInjection.Tests
             Console.SetOut(new StringWriter(sb));
 
             await Host.CreateDefaultBuilder()
-                .ConfigureServices(ConfigureServices<TService>)
+                .ConfigureServices(services => services
+                    .AddHostedService<TService>()
+                    .AddTransient<IConsole, CustomConsole>())
                 .UsePropertyInjection()
                 .RunConsoleAsync();
 
             sb.ToString().Should().StartWith("Hello World");
         }
 
-        private static void ConfigureServices<TService>(IServiceCollection services)
-            where TService : class, IHostedService =>
-            services
-                .AddHostedService<TService>()
-                .AddTransient<IConsole, CustomConsole>();
+        // todo test inheritance with generics
+
+        // todo test services with factory etc
+
+        [Fact]
+        public async Task Lol()
+        {
+            var sb = new StringBuilder();
+            Console.SetOut(new StringWriter(sb));
+
+            await Host.CreateDefaultBuilder()
+                .ConfigureServices(services => services
+                    .AddHostedService(s => new HelloWorldPublicSetter())
+                    .AddTransient<IConsole, CustomConsole>())
+                .UsePropertyInjection()
+                .RunConsoleAsync();
+
+            sb.ToString().Should().StartWith("Hello World");
+        }
     }
 }
