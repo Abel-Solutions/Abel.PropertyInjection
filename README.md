@@ -18,7 +18,7 @@ public EnvironmentService(
 }
 ~~~
 
-With property injection, that block of code is replaced with:
+With property injection, the above block of code can be replaced with:
 
 ~~~
 [Inject]
@@ -32,19 +32,24 @@ That's right, constructors are a thing of the past. Just slap some `[Inject]` at
 
 ## Supported member types
 
-The observant reader might notice that the above example uses fields, not properties. Fields work just as well, property injection just sounds cooler. The following member types are supported:
+The observant reader might notice that the above example uses fields, not properties. Fields work just as well, property injection just sounds cooler. 
 
-* Properties with public setters
-* Properties with private setters
-* Properties without any setter
-* Public fields
-* Protected fields
-* Private fields
-* Readonly fields
+The following member types are supported:
+
+* All properties, no matter the type of setter:
+	* public, protected, private
+	* static
+	* no setter (yep, that's right!)
+* All fields, any combination of:
+	* public, protected, private
+	* static
+	* readonly
 
 ## What about inheritance?
 
-You can remove constructors all the way up the chain: base classes, children and everything in-between.
+With inheritance, dependencies are often passed through multiple levels of constructors, making the code much messier than the above example. 
+
+Luckily, property injection works just as well in base classes, child classes and everything in-between. Just delete all those pesky constructors, and your dependencies will be taken care of, no matter where they are in the hierarchy. This is where property injection really shines!
 
 ## Installation
 
