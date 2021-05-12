@@ -38,51 +38,31 @@ namespace Abel.PropertyInjection.Tests
         public async Task Inject_Instance_ReadonlyField_IsInjected() =>
             await TestInstanceInjection<HelloWorldReadonlyField>();
 
-        private static async Task TestInstanceInjection<TService>() // todo extract
-            where TService : class, IHostedService
-        {
-            var sb = new StringBuilder();
-            await using var stringWriter = new StringWriter(sb);
-            Console.SetOut(stringWriter);
-
-            await Host.CreateDefaultBuilder()
-                .ConfigureServices(services => services
-                    .AddHostedService<TService>()
-                    .AddTransient<IConsole, CustomConsole>())
-                .UsePropertyInjection()
-                .RunConsoleAsync();
-
-            sb.ToString().Should().StartWith("Hello World");
-        }
+        private static async Task TestInstanceInjection<TService>()
+            where TService : class, IHostedService =>
+            await TestInjection(s =>
+                s.AddHostedService<TService>());
 
         [Fact]
-        public async Task Inject_ImplementationType_IsInjected()
-        {
-            var sb = new StringBuilder();
-            await using var stringWriter = new StringWriter(sb);
-            Console.SetOut(stringWriter);
-
-            await Host.CreateDefaultBuilder()
-                .ConfigureServices(services => services
-                    .AddHostedService<HelloWorldPublicSetter>()
-                    .AddTransient<IConsole, CustomConsole>())
-                .UsePropertyInjection()
-                .RunConsoleAsync();
-
-            sb.ToString().Should().StartWith("Hello World");
-        }
+        public async Task Inject_ImplementationType_IsInjected() =>
+            await TestInjection(s =>
+                s.AddHostedService<HelloWorldPublicSetter>());
 
         [Fact]
-        public async Task Inject_ImplementationFactory_IsInjected()
+        public async Task Inject_ImplementationFactory_IsInjected() =>
+            await TestInjection(s =>
+                s.AddHostedService(_ => new HelloWorldPublicSetter()));
+
+        private static async Task TestInjection(Func<IServiceCollection, IServiceCollection> servicesFunc)
         {
             var sb = new StringBuilder();
             await using var stringWriter = new StringWriter(sb);
             Console.SetOut(stringWriter);
 
             await Host.CreateDefaultBuilder()
-                .ConfigureServices(services => services
-                    .AddHostedService(_ => new HelloWorldPublicSetter())
-                    .AddTransient<IConsole, CustomConsole>())
+                .ConfigureServices(services =>
+                    servicesFunc(services)
+                        .AddTransient<IConsole, CustomConsole>())
                 .UsePropertyInjection()
                 .RunConsoleAsync();
 
