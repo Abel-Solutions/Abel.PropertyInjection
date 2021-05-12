@@ -32,7 +32,7 @@ That's right, constructors are a thing of the past. Just slap some `[Inject]` at
 
 ## Supported member types
 
-The observant reader might notice that the above example uses fields, not properties. That's right, fields work just as well, property injection just sounds cooler. The following member types are supported:
+The observant reader might notice that the above example uses fields, not properties. Fields work just as well, property injection just sounds cooler. The following member types are supported:
 
 * Properties with public setters
 * Properties with private setters
