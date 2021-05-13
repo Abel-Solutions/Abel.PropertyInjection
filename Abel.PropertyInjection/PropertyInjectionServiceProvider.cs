@@ -22,12 +22,6 @@ namespace Abel.PropertyInjection
             _originalServiceProvider = services.BuildServiceProvider();
         }
 
-        private void InjectServices(IServiceCollection services) =>
-            services
-                .Where(IsInjectable)
-                .ToList()
-                .ForEach(InjectDescriptor);
-
         public object GetService(Type type) =>
             _propertyInjector.InjectProperties(GetAnyOriginalService(type));
 
@@ -36,17 +30,22 @@ namespace Abel.PropertyInjection
             _originalServiceProvider.GetService(GetAssignableService(type));
 
         private Type GetAssignableService(Type type) =>
-            _services.FirstOrDefault(s => s.ServiceType.IsAssignableTo(type))?.ServiceType;
+            _services.First(s => s.ServiceType.IsAssignableTo(type)).ServiceType;
+
+        private void InjectServices(IServiceCollection services) =>
+            services
+                .Where(IsInjectable)
+                .ToList()
+                .ForEach(InjectDescriptor);
 
         private static bool IsInjectable(ServiceDescriptor descriptor) =>
-            !descriptor.ServiceType.IsGenericTypeDefinition &&
             descriptor.InvokeMethod<Type>("GetImplementationType")
                 .HasAnyMemberAttribute<InjectAttribute>();
 
         private void InjectDescriptor(ServiceDescriptor descriptor) =>
-            _services.Replace(new ServiceDescriptor(descriptor.ServiceType, CreateNewFactory(descriptor), descriptor.Lifetime));
+            _services.Replace(new ServiceDescriptor(descriptor.ServiceType, CreateFactory(descriptor), descriptor.Lifetime));
 
-        private Func<IServiceProvider, object> CreateNewFactory(ServiceDescriptor descriptor) =>
+        private Func<IServiceProvider, object> CreateFactory(ServiceDescriptor descriptor) =>
             _ => _propertyInjector.InjectProperties(CreateInstance(descriptor));
 
         private object CreateInstance(ServiceDescriptor descriptor) =>
