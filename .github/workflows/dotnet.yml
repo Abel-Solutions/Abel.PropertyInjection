@@ -38,4 +38,4 @@ jobs:
     - name: Download artifact
       uses: actions/download-artifact@v2.0.9
     - name: Publish
-      run: dotnet nuget push *.nupkg --api-key $${{ secrets.NUGET_KEY }} --source https://api.nuget.org/v3/index.json
+      run: dotnet nuget push **/*.nupkg --api-key ${{ secrets.NUGET_KEY }} --source https://api.nuget.org/v3/index.json
