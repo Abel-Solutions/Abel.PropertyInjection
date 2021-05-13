@@ -33,10 +33,8 @@ namespace Abel.PropertyInjection
             _services.First(s => s.ServiceType.IsAssignableTo(type)).ServiceType;
 
         private void InjectServices(IServiceCollection services) =>
-            services
-                .Where(IsInjectable)
-                .ToList()
-                .ForEach(InjectDescriptor);
+            services.Where(IsInjectable)
+                .ToList().ForEach(InjectDescriptor);
 
         private static bool IsInjectable(ServiceDescriptor descriptor) =>
             descriptor.InvokeMethod<Type>("GetImplementationType")
