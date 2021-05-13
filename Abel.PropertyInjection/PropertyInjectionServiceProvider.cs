@@ -50,19 +50,8 @@ namespace Abel.PropertyInjection
             _ => _propertyInjector.InjectProperties(CreateInstance(descriptor));
 
         private object CreateInstance(ServiceDescriptor descriptor) =>
-            GetImplementationInstance(descriptor) ??
-            CreateImplementationInstance(descriptor) ??
-            CreateImplementationFromFactory(descriptor);
-
-        private static object GetImplementationInstance(ServiceDescriptor descriptor) =>
-            descriptor.ImplementationInstance;
-
-        private object CreateImplementationInstance(ServiceDescriptor descriptor) =>
-            descriptor.ImplementationType != null ?
-                ActivatorUtilities.CreateInstance(this, descriptor.ImplementationType) :
-                null;
-
-        private object CreateImplementationFromFactory(ServiceDescriptor descriptor) =>
-            descriptor.ImplementationFactory?.Invoke(this);
+            descriptor.ImplementationInstance ??
+            descriptor.ImplementationFactory?.Invoke(this) ??
+            ActivatorUtilities.CreateInstance(this, descriptor.ImplementationType);
     }
 }
