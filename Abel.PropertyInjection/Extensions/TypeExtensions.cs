@@ -36,5 +36,9 @@ namespace Abel.PropertyInjection.Extensions
 
         private static bool HasAttribute<TAttribute>(this MemberInfo member) =>
             member.IsDefined(typeof(TAttribute), true);
+
+        public static T InvokeMethod<T>(this object instance, string methodName) =>
+            (T)instance.GetType().GetMethod(methodName, BindingFlags)
+                .Invoke(instance, null);
     }
 }
