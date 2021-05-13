@@ -24,10 +24,10 @@ jobs:
       run: dotnet build --no-restore
     - name: Test
       run: dotnet test --no-build --verbosity normal
-    - name: upload nuget
+    - name: Upload artifact
       uses: actions/upload-artifact@v2.2.3
       with:
-        path: "*.nupkg"
+        path: "**/*.nupkg"
       
   publish:
     runs-on: ubuntu-latest
@@ -35,8 +35,7 @@ jobs:
     if: github.ref == 'refs/heads/master'
     
     steps:
-    
-    - name: download artifact
+    - name: Download artifact
       uses: actions/download-artifact@v2.0.9
     - name: Publish
       run: dotnet nuget push *.nupkg --api-key $${{ secrets.NUGET_KEY }} --source https://api.nuget.org/v3/index.json
