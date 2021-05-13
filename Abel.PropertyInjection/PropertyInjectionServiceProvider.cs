@@ -17,48 +17,37 @@ namespace Abel.PropertyInjection
         public PropertyInjectionServiceProvider(IServiceCollection services)
         {
             _propertyInjector = new PropertyInjector(this);
-            _services = services.AddSingleton<IPropertyInjectionServiceProvider>(this); // todo
-            _originalServiceProvider = services.BuildServiceProvider(); // todo
+            _services = services.AddSingleton<IPropertyInjectionServiceProvider>(this);
             InjectServices(services);
             _originalServiceProvider = services.BuildServiceProvider();
         }
 
         private void InjectServices(IServiceCollection services) =>
             services
+                .Where(IsInjectable)
                 .ToList()
                 .ForEach(InjectDescriptor);
 
-        public object GetService(Type serviceType) =>
-            GetAnyOriginalService(serviceType) is var service and not null ?
-                _propertyInjector.InjectProperties(service) :
-                null;
+        public object GetService(Type type) =>
+            _propertyInjector.InjectProperties(GetAnyOriginalService(type));
 
         private object GetAnyOriginalService(Type type) =>
-            GetOriginalService(type) ??
-            GetOriginalService(GetAssignableService(type));
-
-        private object GetOriginalService(Type type) =>
-            type == null ? null : _originalServiceProvider.GetService(type);
+            _originalServiceProvider.GetService(type) ??
+            _originalServiceProvider.GetService(GetAssignableService(type));
 
         private Type GetAssignableService(Type type) =>
             _services.FirstOrDefault(s => s.ServiceType.IsAssignableTo(type))?.ServiceType;
 
-        private static bool IsInjectable(object service) =>
-            service != null && service.GetType().GetAllMembersByAttribute<InjectAttribute>().Any();
+        private static bool IsInjectable(ServiceDescriptor descriptor) =>
+            !descriptor.ServiceType.IsGenericTypeDefinition &&
+            descriptor.InvokeMethod<Type>("GetImplementationType")
+                .HasAnyMemberAttribute<InjectAttribute>();
 
-        private void InjectDescriptor(ServiceDescriptor descriptor)
-        {
-            if (CreateInstance(descriptor) is var service && IsInjectable(service))
-            {
-                ReplaceDescriptor(descriptor, service);
-            }
-        }
+        private void InjectDescriptor(ServiceDescriptor descriptor) =>
+            _services.Replace(new ServiceDescriptor(descriptor.ServiceType, CreateNewFactory(descriptor), descriptor.Lifetime));
 
-        private void ReplaceDescriptor(ServiceDescriptor descriptor, object service) =>
-            _services.Replace(new ServiceDescriptor(descriptor.ServiceType, GetFactory(service), descriptor.Lifetime));
-
-        private Func<IServiceProvider, object> GetFactory(object instance) =>
-            _ => _propertyInjector.InjectProperties(instance);
+        private Func<IServiceProvider, object> CreateNewFactory(ServiceDescriptor descriptor) =>
+            _ => _propertyInjector.InjectProperties(CreateInstance(descriptor));
 
         private object CreateInstance(ServiceDescriptor descriptor) =>
             GetImplementationInstance(descriptor) ??
@@ -69,13 +58,9 @@ namespace Abel.PropertyInjection
             descriptor.ImplementationInstance;
 
         private object CreateImplementationInstance(ServiceDescriptor descriptor) =>
-            descriptor.ImplementationType is { IsGenericTypeDefinition: false } type ? ActivateInstance(type) : null;
-
-        private object ActivateInstance(Type type)
-        {
-            try { return ActivatorUtilities.CreateInstance(this, type); }
-            catch { return null; }
-        }
+            descriptor.ImplementationType != null ?
+                ActivatorUtilities.CreateInstance(this, descriptor.ImplementationType) :
+                null;
 
         private object CreateImplementationFromFactory(ServiceDescriptor descriptor) =>
             descriptor.ImplementationFactory?.Invoke(this);

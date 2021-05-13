@@ -49,6 +49,6 @@ namespace Abel.PropertyInjection
 
         private object GetService(Type type) =>
             _serviceProvider.GetService(type) ??
-                   throw new PropertyInjectionException($"Could not find service for type {type.Name}");
+            throw new PropertyInjectionException($"Could not find service for type {type.Name}");
     }
 }
