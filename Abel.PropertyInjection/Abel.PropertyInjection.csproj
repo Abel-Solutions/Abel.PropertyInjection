@@ -2,6 +2,12 @@
 
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
+
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <PackageId>Abel.PropertyInjection</PackageId>
+    <Version>1.0.0</Version>
+    <Authors>amazingalek</Authors>
+    <Company>Abel Solutions</Company>
   </PropertyGroup>
 
   <ItemGroup>
