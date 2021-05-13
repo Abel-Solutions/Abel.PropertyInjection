@@ -20,7 +20,7 @@ namespace Abel.PropertyInjection.TestApi.Controllers
         private readonly ILogger<WeatherForecastController> _logger;
         private readonly IHelloWorld _helloWorld;
 
-        public WeatherForecastController(ILogger<WeatherForecastController> logger, IHelloWorld helloWorld, IServiceProvider serviceProvider)
+        public WeatherForecastController(ILogger<WeatherForecastController> logger, IServiceProvider serviceProvider)
         {
             _logger = logger;
             _helloWorld = serviceProvider.GetService<IHelloWorld>();

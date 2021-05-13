@@ -46,7 +46,7 @@ Luckily, property injection works just as well in base classes, child classes an
 
 ## Installation
 
-1. Download the Nuget package.
+1. Download the Abel.PropertyInjection Nuget package.
 2. Add `.UsePropertyInjection()` to your host builder. If you don't have one, you can follow [this guide](https://dfederm.com/building-a-console-app-with-.net-generic-host/) to add it.
 
 ~~~
