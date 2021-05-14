@@ -1,4 +1,4 @@
-# Abel.PropertyInjection
+# Abel Property Injection
 
 Property injection is the answer to the question: "Why do I need to define fields or properties for my dependencies, then have them injected in a constructor, and then assign them? I don't want to repeat myself thrice, what can I do?!"
 
@@ -10,8 +10,8 @@ private readonly IEnvironmentRepository _environmentRepository;
 private readonly IModelMapper<GroupServiceModel, GroupEntity> _groupMapper;
 
 public EnvironmentService(
-	IEnvironmentRepository environmentRepository,
-	IModelMapper<GroupServiceModel, GroupEntity> groupMapper)
+    IEnvironmentRepository environmentRepository,
+    IModelMapper<GroupServiceModel, GroupEntity> groupMapper)
 {
     _environmentRepository = environmentRepository;
     _groupMapper = groupMapper;
@@ -53,7 +53,7 @@ Luckily, property injection works just as well in base classes, child classes an
 Host.CreateDefaultBuilder(args)
     .UsePropertyInjection()
     .ConfigureWebHostDefaults(webBuilder =>
-		webBuilder.UseStartup<Startup>());
+        webBuilder.UseStartup<Startup>());
 ```
 
 3. Delete your constructors.
