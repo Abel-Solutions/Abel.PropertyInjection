@@ -3,15 +3,24 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.31205.134
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Abel.PropertyInjection.TestApi", "Abel.PropertyInjection.TestApi\Abel.PropertyInjection.TestApi.csproj", "{CDD6F6A6-622E-48C1-94BD-29CED440AADE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Abel.PropertyInjection.TestApi", "tests\Abel.PropertyInjection.TestApi\Abel.PropertyInjection.TestApi.csproj", "{CDD6F6A6-622E-48C1-94BD-29CED440AADE}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Abel.PropertyInjection", "Abel.PropertyInjection\Abel.PropertyInjection.csproj", "{9707A6D9-9DA3-4885-8A71-6A98414C13B0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Abel.PropertyInjection", "src\Abel.PropertyInjection\Abel.PropertyInjection.csproj", "{9707A6D9-9DA3-4885-8A71-6A98414C13B0}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Abel.PropertyInjection.TestApp", "Abel.PropertyInjection.TestApp\Abel.PropertyInjection.TestApp.csproj", "{B305E487-00F1-43AC-8A8E-BD91B9501913}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Abel.PropertyInjection.TestApp", "tests\Abel.PropertyInjection.TestApp\Abel.PropertyInjection.TestApp.csproj", "{B305E487-00F1-43AC-8A8E-BD91B9501913}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Abel.PropertyInjection.TestServices", "Abel.PropertyInjection.TestServices\Abel.PropertyInjection.TestServices.csproj", "{54C2010C-D25B-43B4-84F5-F3B0BD29DEC7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Abel.PropertyInjection.TestServices", "tests\Abel.PropertyInjection.TestServices\Abel.PropertyInjection.TestServices.csproj", "{54C2010C-D25B-43B4-84F5-F3B0BD29DEC7}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Abel.PropertyInjection.Tests", "Abel.PropertyInjection.Tests\Abel.PropertyInjection.Tests.csproj", "{A08214E7-384C-4C1F-BD73-CB9E5D322461}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Abel.PropertyInjection.Tests", "tests\Abel.PropertyInjection.Tests\Abel.PropertyInjection.Tests.csproj", "{A08214E7-384C-4C1F-BD73-CB9E5D322461}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{39E46BAA-B170-4F6F-92B7-744DB15369F6}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{5C7D107D-503F-4B78-B587-9D7385F7A254}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{8228DCAE-E5C9-405F-A2CD-DA6ECD0E5080}"
+	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -42,6 +51,13 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{CDD6F6A6-622E-48C1-94BD-29CED440AADE} = {5C7D107D-503F-4B78-B587-9D7385F7A254}
+		{9707A6D9-9DA3-4885-8A71-6A98414C13B0} = {39E46BAA-B170-4F6F-92B7-744DB15369F6}
+		{B305E487-00F1-43AC-8A8E-BD91B9501913} = {5C7D107D-503F-4B78-B587-9D7385F7A254}
+		{54C2010C-D25B-43B4-84F5-F3B0BD29DEC7} = {5C7D107D-503F-4B78-B587-9D7385F7A254}
+		{A08214E7-384C-4C1F-BD73-CB9E5D322461} = {5C7D107D-503F-4B78-B587-9D7385F7A254}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {177A645A-448F-4F79-9AC9-E5B2128A4F56}
