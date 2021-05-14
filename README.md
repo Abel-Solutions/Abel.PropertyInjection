@@ -4,7 +4,7 @@ Property injection is the answer to the question: "Why do I need to define field
 
 This is a typical example:
 
-~~~
+```C#
 private readonly IEnvironmentRepository _environmentRepository;
 
 private readonly IModelMapper<GroupServiceModel, GroupEntity> _groupMapper;
@@ -16,17 +16,17 @@ public EnvironmentService(
     _environmentRepository = environmentRepository;
     _groupMapper = groupMapper;
 }
-~~~
+```
 
 With property injection, the above block of code can be replaced with:
 
-~~~
+```C#
 [Inject]
 private readonly IEnvironmentRepository _environmentRepository;
 
 [Inject]
 private readonly IModelMapper<GroupServiceModel, GroupEntity> _groupMapper;
-~~~
+```
 
 That's right, constructors are a thing of the past. Just slap some `[Inject]` attributes on there and you're good to go.
 
@@ -49,12 +49,12 @@ Luckily, property injection works just as well in base classes, child classes an
 1. Download the Abel.PropertyInjection Nuget package.
 2. Add `.UsePropertyInjection()` to your host builder. If you don't have one, you can follow [this guide](https://dfederm.com/building-a-console-app-with-.net-generic-host/) to add it.
 
-~~~
+```C#
 Host.CreateDefaultBuilder(args)
     .UsePropertyInjection()
     .ConfigureWebHostDefaults(webBuilder =>
 		webBuilder.UseStartup<Startup>());
-~~~
+```
 
 3. Delete your constructors.
 4. Add `[Inject]` attributes to your fields and properties.
