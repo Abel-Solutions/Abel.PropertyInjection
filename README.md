@@ -10,8 +10,8 @@ private readonly IEnvironmentRepository _environmentRepository;
 private readonly IModelMapper<GroupServiceModel, GroupEntity> _groupMapper;
 
 public EnvironmentService(
-	IEnvironmentRepository environmentRepository,
-	IModelMapper<GroupServiceModel, GroupEntity> groupMapper)
+    IEnvironmentRepository environmentRepository,
+    IModelMapper<GroupServiceModel, GroupEntity> groupMapper)
 {
     _environmentRepository = environmentRepository;
     _groupMapper = groupMapper;
@@ -53,7 +53,7 @@ Luckily, property injection works just as well in base classes, child classes an
 Host.CreateDefaultBuilder(args)
     .UsePropertyInjection()
     .ConfigureWebHostDefaults(webBuilder =>
-		webBuilder.UseStartup<Startup>());
+        webBuilder.UseStartup<Startup>());
 ```
 
 3. Delete your constructors.
