@@ -9,7 +9,6 @@ on:
 jobs:
 
   build:
-
     runs-on: ubuntu-latest
 
     steps:
@@ -38,4 +37,8 @@ jobs:
     - name: Download artifact
       uses: actions/download-artifact@v2.0.9
     - name: Publish
-      run: dotnet nuget push **/*.nupkg --api-key ${{ secrets.NUGET_KEY }} --source https://api.nuget.org/v3/index.json
+      run: >
+        dotnet nuget push **/*.nupkg
+        --api-key ${{ secrets.NUGET_KEY }}
+        --source https://api.nuget.org/v3/index.json
+        --skip-duplicate
