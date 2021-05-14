@@ -9,7 +9,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Abel.PropertyInjection\Abel.PropertyInjection.csproj" />
+    <ProjectReference Include="..\..\src\Abel.PropertyInjection\Abel.PropertyInjection.csproj" />
   </ItemGroup>
 
 </Project>
