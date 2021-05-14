@@ -1,4 +1,4 @@
-# Abel.PropertyInjection
+# Abel Property Injection
 
 Property injection is the answer to the question: "Why do I need to define fields or properties for my dependencies, then have them injected in a constructor, and then assign them? I don't want to repeat myself thrice, what can I do?!"
 
